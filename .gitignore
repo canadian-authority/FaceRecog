@@ -1,0 +1,27 @@
+﻿__pycache__/
+*.py[cod]
+
+recognized_output/
+attendance_screenshots/
+recognition_results.csv
+attendance_*.csv
+
+encodings.pickle
+encodings_batch_*.tmp
+.venv/
+venv/
+*/venv/
+.idea/
+dlib/
+*.dat
+facesm6/
+
+docs mess/
+*.whl
+*.zip
+rasp/facesm2/
+rasp/attendance_screenshots/
+rasp/attendance*.csv
+rasp/encodings.pickle
+rasp/*.png
+
