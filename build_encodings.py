@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--dataset",
         type=Path,
-        default=default_path("facesm6"),
+        default=default_path("train_faces"),
         help="Folder with one subfolder per person, e.g. faces/Person/image.jpg.",
     )
     parser.add_argument(

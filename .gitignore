@@ -13,7 +13,7 @@ venv/
 */venv/
 .idea/
 dlib/
-facesm6/
+train_faces/
 rasp/
 
 docs mess/

@@ -85,7 +85,7 @@ python -c "import dlib; print('CUDA:', dlib.DLIB_USE_CUDA)"
 Create a local dataset folder with one subfolder per person:
 
 ```text
-facesm6/
+train_faces/
   PersonA/
     image_0.jpg
     image_1.jpg
@@ -95,7 +95,7 @@ facesm6/
 ```
 
 The folder name is the label that will be saved in `encodings.pickle`. For
-example, images inside `facesm6/PersonA/` will be saved with the label
+example, images inside `train_faces/PersonA/` will be saved with the label
 `PersonA`.
 
 Use clear images where the face is visible. A few varied images per person are
@@ -112,7 +112,7 @@ label, pass `--allow-multiple`.
 Run:
 
 ```powershell
-python build_encodings.py --dataset ".\facesm6" --output "encodings.pickle" --models-dir "."
+python build_encodings.py --dataset ".\train_faces" --output "encodings.pickle" --models-dir "."
 ```
 
 What happens internally:
@@ -265,7 +265,7 @@ python recognize_folder.py --unknown-name "Not enrolled"
 
 1. Clone the repository.
 2. Install dependencies with `python -m pip install -r requirements.txt`.
-3. Add your own local training dataset in the `facesm6/` format.
+3. Add your own local training dataset in the `train_faces/` format.
 4. Build `encodings.pickle` with `build_encodings.py`.
 5. Run `recognize_folder.py` or `recognize_webcam.py`.
 
@@ -275,7 +275,7 @@ each user can generate their own encodings from their own images.
 
 ## Privacy Note
 
-Face images and face encodings are biometric data. Keep `facesm6/` and
+Face images and face encodings are biometric data. Keep `train_faces/` and
 `encodings.pickle` private unless every person in the dataset has agreed to
 their data being shared. The `.gitignore` file excludes those local files by
 default.

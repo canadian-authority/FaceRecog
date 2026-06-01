@@ -35,7 +35,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--input",
         type=Path,
-        default=default_path("facesm6"),
+        default=default_path("train_faces"),
         help="Folder of images to scan recursively.",
     )
     parser.add_argument(
