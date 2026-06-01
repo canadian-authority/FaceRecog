@@ -62,6 +62,63 @@ face consistently.
 128-dimensional vector. Similar faces should produce vectors that are close
 together. Different faces should produce vectors that are farther apart.
 
+## Research View Of The Pipeline
+
+At a computer vision level, the project is a multi-stage pipeline:
+
+```text
+image -> face localization -> landmark alignment -> 128-D embedding -> distance match
+```
+
+The first stage is object localization. The input image can be treated as an
+`H x W x 3` color tensor, and the detector's job is to find rectangular regions
+that probably contain faces. In `hog` mode, dlib uses a Histogram of Oriented
+Gradients style detector. HOG describes local edge directions and texture
+patterns, then uses a lightweight classifier over sliding windows. This is much
+easier for a CPU to run, but it is less tolerant of difficult lighting, partial
+profiles, blur, and unusual head poses.
+
+In `cnn` mode, the project uses dlib's MMOD CNN detector. Instead of relying on
+hand-designed gradient histograms, the CNN learns layered image features. Early
+layers respond to simple patterns such as edges and contrast; deeper layers
+combine them into more face-specific structures. This makes the detector more
+robust, but it also requires many matrix and convolution operations. A
+CUDA-enabled GPU can run those operations in parallel, while a CPU usually has
+to process them more slowly.
+
+After localization, the project performs geometric alignment with the
+68-landmark predictor. The landmark model estimates stable points around the
+eyes, nose, mouth, jawline, and face boundary. Passing these landmarks into
+dlib's face descriptor step reduces variation caused by rotation, scale, and
+head tilt. In practical terms, the recognizer gets a more consistent view of the
+same person's face even when the raw photo is not perfectly centered.
+
+The embedding stage is deep metric learning. The recognition model is not
+trained as a normal classifier that only knows a fixed list of people. Instead,
+it maps each face into a 128-dimensional space where identity is represented by
+geometry: images of the same person should land near each other, and images of
+different people should land farther apart. This is why adding a new person
+does not require retraining the neural network. You only add new labeled images,
+generate their embeddings, and save them in `encodings.pickle`.
+
+Recognition is then distance-based inference. For a new face vector and a saved
+known vector, the script computes Euclidean distance:
+
+```text
+distance = sqrt(sum((query_i - known_i)^2 for i in 1..128))
+```
+
+The closest known vector becomes the candidate identity. The `--threshold`
+setting decides whether that candidate is trustworthy enough to accept. A lower
+threshold is stricter and reduces false positives. A higher threshold is more
+permissive and can reduce false negatives, but it may accept incorrect matches.
+
+For this repository, the most visible CPU/GPU difference is usually the face
+detection step. The HOG detector is the practical CPU fallback. The CNN detector
+is the accuracy-oriented path and is best when dlib was compiled with CUDA
+support. Descriptor generation also uses a neural model, but for small numbers
+of faces per frame the detector choice often dominates webcam performance.
+
 ## Install Dependencies
 
 Install the Python packages:
@@ -279,3 +336,16 @@ Face images and face encodings are biometric data. Keep `train_faces/` and
 `encodings.pickle` private unless every person in the dataset has agreed to
 their data being shared. The `.gitignore` file excludes those local files by
 default.
+
+## Background References
+
+- dlib Python API: `face_recognition_model_v1` maps faces to 128-D descriptors
+  and compares them by distance:
+  <https://dlib.net/python/index.html>
+- dlib face recognition example:
+  <https://dlib.net/face_recognition.py.html>
+- dlib CNN face detector example:
+  <https://dlib.net/cnn_face_detector.py.html>
+- Kazemi and Sullivan, "One Millisecond Face Alignment with an Ensemble of
+  Regression Trees", CVPR 2014:
+  <https://openaccess.thecvf.com/content_cvpr_2014/html/Kazemi_One_Millisecond_Face_2014_CVPR_paper.html>
