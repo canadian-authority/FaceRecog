@@ -13,7 +13,6 @@ venv/
 */venv/
 .idea/
 dlib/
-*.dat
 facesm6/
 rasp/
 
