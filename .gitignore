@@ -15,6 +15,7 @@ venv/
 dlib/
 *.dat
 facesm6/
+rasp/
 
 docs mess/
 *.whl
