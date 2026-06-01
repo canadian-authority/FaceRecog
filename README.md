@@ -1,22 +1,17 @@
-﻿# FaceRecog
+# FaceRecog
 
-Folder-based face recognition using your dlib models and existing `encodings.pickle`.
+Folder-based face recognition using local dlib models and an `encodings.pickle`
+file.
 
 ## Files Expected
 
-The scripts look first in the working folder:
+Run commands from the project root:
 
 ```text
-C:\Users\daule\Desktop\FaceRecog
+FaceRecog
 ```
 
-They still fall back to the old draft folder if needed:
-
-```text
-C:\Users\daule\Desktop\MLAI
-```
-
-Expected model files in the working folder:
+Expected model files in the project root:
 
 ```text
 dlib_face_recognition_resnet_model_v1.dat
@@ -26,10 +21,12 @@ shape_predictor_68_face_landmarks.dat
 
 ## Install Dependencies
 
-Use the Python environment where your CUDA-enabled `dlib` is already installed. To avoid replacing that build, install only the missing supporting packages if needed:
+Use the Python environment where your CUDA-enabled `dlib` is already installed.
+To avoid replacing that build, install only the missing supporting packages if
+needed:
 
 ```powershell
-cd "C:\Users\daule\Desktop\FaceRecog"
+cd FaceRecog
 python -m pip install numpy opencv-python
 ```
 
@@ -40,27 +37,29 @@ python -c "import dlib; print('CUDA:', dlib.DLIB_USE_CUDA)"
 ```
 
 `CUDA: True` means the CNN detector can use the GPU.
+
 ## Recognize Faces From Webcam
 
-After `encodings.pickle` exists in the working folder, run:
+After `encodings.pickle` exists in the project root, run:
 
 ```powershell
 python recognize_webcam.py --detector cnn
 ```
 
 Press `q` or Esc in the webcam window to stop.
+
 ## Recognize Faces In A Folder
 
 Run this from:
 
 ```powershell
-cd "C:\Users\daule\Desktop\FaceRecog"
+cd FaceRecog
 ```
 
-To test against the draft `facesm6` folder:
+To test against a local `facesm6` folder:
 
 ```powershell
-python recognize_folder.py --input "C:\Users\daule\Desktop\FaceRecog\facesm6" --models-dir "C:\Users\daule\Desktop\FaceRecog"
+python recognize_folder.py --input ".\facesm6" --models-dir "."
 ```
 
 Outputs:
@@ -70,7 +69,9 @@ recognized_output\
 recognition_results.csv
 ```
 
-Recognition also needs `encodings.pickle`. If it is not in the working folder yet, run the build command below first. Each row in `recognition_results.csv` contains the image path, face box, predicted name, match distance, and status.
+Recognition also needs `encodings.pickle`. If it is not in the project root yet,
+run the build command below first. Each row in `recognition_results.csv`
+contains the image path, face box, predicted name, match distance, and status.
 
 ## Build Or Rebuild Encodings
 
@@ -78,22 +79,22 @@ The training folder should have one folder per person:
 
 ```text
 facesm6\
-  Abay\
-    Abay_0.jpg
-  Adyl\
-    Adyl_0.jpg
+  PersonA\
+    image_0.jpg
+  PersonB\
+    image_0.jpg
 ```
 
 Rebuild the pickle:
 
 ```powershell
-python build_encodings.py --dataset "C:\Users\daule\Desktop\FaceRecog\facesm6" --output "encodings.pickle" --models-dir "C:\Users\daule\Desktop\FaceRecog"
+python build_encodings.py --dataset ".\facesm6" --output "encodings.pickle" --models-dir "."
 ```
 
 Then recognize using the rebuilt file:
 
 ```powershell
-python recognize_folder.py --input "C:\path\to\images" --encodings "encodings.pickle" --models-dir "C:\Users\daule\Desktop\FaceRecog"
+python recognize_folder.py --input ".\path\to\images" --encodings "encodings.pickle" --models-dir "."
 ```
 
 ## Useful Options
@@ -115,10 +116,3 @@ Improve small-face detection:
 ```powershell
 python recognize_folder.py --upsample 1
 ```
-
-
-
-
-
-
-

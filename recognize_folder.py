@@ -19,14 +19,12 @@ from facerec_core import (
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
-DRAFT_DIR = Path(r"C:\Users\daule\Desktop\MLAI")
 
 
 def default_path(filename: str) -> Path:
-    for base_dir in (PROJECT_DIR, DRAFT_DIR):
-        candidate = base_dir / filename
-        if candidate.exists():
-            return candidate
+    candidate = PROJECT_DIR / filename
+    if candidate.exists():
+        return candidate
     return Path(filename)
 
 
